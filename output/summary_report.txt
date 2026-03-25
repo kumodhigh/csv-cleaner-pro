@@ -1,0 +1,24 @@
+
+DATA QUALITY REPORT
+==================
+Generated: 2026-03-25 19:28:52 +0545
+
+📈 SUMMARY:
+- Total Rows Processed: 17,907
+- Total Columns: 6
+- Shape: (17907, 6)
+
+📋 COLUMNS:
+Description, Industry, Level, Employee_Size, Value, Unit
+
+🏆 TOP 5 INDUSTRIES:
+{'total': 1905, 'Construction': 381, 'Accommodation & food services': 381, 'Manufacturing': 381, 'Professional, scientific, & technical services': 381}
+
+📊 SAMPLE DATA (first 3 rows):
+                                                                          Description Industry  Level Employee_Size   Value                 Unit
+                                                           Total number of businesses    total      0         total 48990.0 Number of businesses
+Importance of quality of goods and services produced by this business: very important    total      0         total 42651.0 Number of businesses
+              Regular communication with employees about: potential improvements: yes    total      0         total 41595.0 Number of businesses
+
+✅ Status: CLEANING COMPLETE
+🚀 Tool: CSV Cleaner Pro v2.0
