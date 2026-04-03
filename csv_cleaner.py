@@ -8,7 +8,6 @@ from config import RENAME_DICT, KEEP_COLUMNS, SORT_BY, MIN_GOOD_COLUMNS
 INPUT_FOLDER = None
 OUTPUT_FILE = None
 
-
 def list_csv_files():
     """Print all CSV files in the input folder."""
     csv_files = [f for f in os.listdir(INPUT_FOLDER) if f.endswith(".csv")]
@@ -83,14 +82,15 @@ def save_pro_excel(df_raw, df_clean):
     """Save with dashboard, charts, and pro formatting."""
     os.makedirs("output", exist_ok=True)
     
+    # Setup logging once
     logging.basicConfig(filename="output/processing_log.txt", level=logging.INFO,
                        format="%(asctime)s - %(message)s")
     
     print(f"\n💾 Creating dashboard + charts ({len(df_clean):,} rows)...")
     
-    # Use openpyxl for compatibility (no chart errors)
+    # Use openpyxl for compatibility
     with pd.ExcelWriter(OUTPUT_FILE, engine='openpyxl') as writer:
-        # Sheet 1: Cleaned Data  
+        # Sheet 1: Cleaned Data
         df_clean.to_excel(writer, sheet_name='🟢 Cleaned_Data', index=False)
         
         # Sheet 2: Raw Data
@@ -108,25 +108,6 @@ def save_pro_excel(df_raw, df_clean):
     
     logging.info(f"Dashboard Excel: Raw({len(df_raw):,}) → Clean({len(df_clean):,})")
     print(f"✅ Dashboard Excel (3 sheets): {OUTPUT_FILE}")
-
-
-    
-    # Setup logging
-    logging.basicConfig(
-        filename="output/processing_log.txt",
-        level=logging.INFO,
-        format="%(asctime)s - %(message)s"
-    )
-    
-    print(f"\n💾 Saving {len(df_clean):,} rows to Excel...")
-    
-    with pd.ExcelWriter(OUTPUT_FILE, engine='openpyxl') as writer:
-        df_clean.to_excel(writer, sheet_name='🟢 Cleaned_Data', index=False)
-        if len(df_raw) > 0:
-            df_raw.to_excel(writer, sheet_name='🔴 Raw_Data', index=False)
-    
-    logging.info(f"Pro Excel saved: Raw({len(df_raw):,}) → Clean({len(df_clean):,}) rows")
-    print(f"✅ Pro Excel saved: {OUTPUT_FILE}")
     print(f"📊 Log saved: output/processing_log.txt")
 
 def generate_summary_report(df):
@@ -155,7 +136,7 @@ Generated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S +0545')}
 {df.head(3).to_string(index=False)}
 
 ✅ Status: CLEANING COMPLETE
-🚀 Tool: CSV Cleaner Pro v2.0
+🚀 Tool: CSV Cleaner Pro v2.1
 """
     
     with open("output/summary_report.txt", "w", encoding='utf-8') as f:
@@ -167,7 +148,7 @@ if __name__ == "__main__":
     import argparse
     import sys
     
-    print("🚀 CSV Cleaner Pro v2.0 - Professional Data Processing")
+    print("🚀 CSV Cleaner Pro v2.1 - Professional Data Processing")
     print("=" * 60)
     
     parser = argparse.ArgumentParser(description="Professional CSV Cleaner Pro")
@@ -175,11 +156,12 @@ if __name__ == "__main__":
     parser.add_argument("--output", default="output/merged_cleaned.xlsx", help="Output file")
     args = parser.parse_args()
     
-    # SIMPLEST FIX: Direct assignment (no global issues)
+    # Set folder/file paths
     INPUT_FOLDER = args.input
     OUTPUT_FILE = args.output
     
     try:
+        # Single clean pipeline
         list_csv_files()
         dfs, raw_dfs = read_all_csvs()
         print(f"\n📊 Total CSVs loaded: {len(dfs)}")
@@ -190,6 +172,10 @@ if __name__ == "__main__":
         print("\n🎉 PROCESSING COMPLETE!")
         print(f"📁 Input: {INPUT_FOLDER}")
         print(f"📁 Output: {OUTPUT_FILE}")
+        print("📁 Check output/ folder for:")
+        print("   ✅ merged_cleaned.xlsx (3 sheets)")
+        print("   📋 summary_report.txt")
+        print("   📊 processing_log.txt")
         
     except FileNotFoundError:
         print(f"❌ Input folder '{INPUT_FOLDER}' not found!")
@@ -197,24 +183,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"❌ Error: {e}")
         sys.exit(1)
-
-    
-    # Stage 1: List files
-    list_csv_files()
-    
-    # Stage 2-3: Read + Clean
-    dfs, raw_dfs = read_all_csvs()
-    print(f"\n📊 Total CSVs loaded: {len(dfs)}")
-    
-    # Stage 4: Merge
-    merged_df = merge_dataframes(dfs)
-    
-    # Stage 5-11: Pro Excel + Reports
-    save_pro_excel(raw_dfs[0] if raw_dfs else merged_df, merged_df)
-    generate_summary_report(merged_df)
-    
-    print("\n🎉 PROCESSING COMPLETE!")
-    print("📁 Check output/ folder for:")
-    print("   ✅ merged_cleaned.xlsx (2 sheets)")
-    print("   📋 summary_report.txt")
-    print("   📊 processing_log.txt")
